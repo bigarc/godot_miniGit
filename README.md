@@ -170,14 +170,16 @@ addons/minigit/
 ## 9.安装与使用
 
 - 1.安装  
-	**将addons文件夹覆盖到工程根目录**  
-	**或者将压缩包直接解压到根目录的addons（如果没有的话就自己新建一个）**
+	**将 addons 文件夹覆盖到工程根目录**  
+	**或者将压缩包直接解压到根目录的 addons（如果没有的话就自己新建一个）**
 - 2.使用
-	现在打开你的工程，打开左上角项目  
-	![[./other/show_1.png.]]  ![[./other/show_2.png.]]  
-	再新弹窗的插件选项中启用插件  
-	  ![[./other/show_3.png.]]
-	在配置中配置各个属性  
-	  ![[./other/show_4.png.]]![[./other/show_5.png.]]
+	现在打开你的工程，打开左上角项目，在下拉窗口中打开项目设置  
+	![项目菜单](other/show_1.png)  
+	![项目设置](other/show_2.png)  
+	在新弹窗的插件选项中启用插件  
+	![插件选项](other/show_3.png)  
+	在配置中配置各个属性：  
+	![配置 1](other/show_4.png)  
+	![配置 2](other/show_5.png)  
 	然后你就可以用了：  
-	![[./other/show_6.png.]]
+	![使用效果](other/show_6.png)
