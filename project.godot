@@ -1,0 +1,12 @@
+; Engine configuration file.
+; Development project for the godot_MiniGit addon.
+config_version=5
+
+[application]
+
+config/name="godot_MiniGit"
+config/features=PackedStringArray("4.7", "Forward Plus")
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/godot_MiniGit/plugin.cfg")

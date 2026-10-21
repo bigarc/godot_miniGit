@@ -1,0 +1,14 @@
+# Godot 4
+.godot/
+/android/
+*.translation
+
+# 导出产物
+/build/
+/export/
+/export_*/
+*.pck
+
+# 系统
+Thumbs.db
+.DS_Store
