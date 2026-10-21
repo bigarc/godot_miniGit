@@ -1,1 +1,8 @@
+# 文本文件统一 LF
 * text=auto eol=lf
+
+# 资产商店打包：归档 ZIP 里只保留插件本体 addons/godot_MiniGit/。
+# git archive 与 GitHub 的源码归档都会读取这里的 export-ignore。
+/**        export-ignore
+/addons    !export-ignore
+/addons/** !export-ignore

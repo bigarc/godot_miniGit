@@ -1,15 +1,7 @@
 @tool
 extends EditorPlugin
 ## 编辑器工具栏的 Git 按钮：首次启用引导配置，之后负责提交、推送、拉取。
-##
-## 为什么不走引擎内置的 VCS 接口：那是给 GDExtension 插件用的空壳，
-## 标准版编辑器不带实现；官方 git 插件基于 libgit2，不走 git 的 clean/smudge
-## 过滤器，对 Git LFS 仓库有风险，SSH 认证也常出问题。
-## 这里直接调用系统 git，行为和你手敲命令行完全一致。
-##
-## 详细流程见同目录 DESIGN.md。
-
-const PLUGIN_NAME := "MiniGit"
+## 详细流程见同目录 README.md。
 
 var _project_dir := ""
 var _runner: MiniGitRunner
@@ -33,7 +25,7 @@ func _enter_tree() -> void:
 	_build_dialogs()
 	_refresh_menu()
 
-	print("[MiniGit] 插件已加载，仓库：", _project_dir, "，已配置：", _configured)
+	print("[MiniGit] is ready,Project:", _project_dir, ",Configured:", _configured, ",Language:", MiniGitI18n.current_locale())
 
 	if not _configured and DisplayServer.get_name() != "headless":
 		call_deferred("_open_setup")
@@ -50,7 +42,7 @@ func _exit_tree() -> void:
 
 func _build_toolbar() -> void:
 	_menu_button = MenuButton.new()
-	_menu_button.tooltip_text = "提交、推送、拉取（调用系统 git，Git LFS 正常）"
+	_menu_button.tooltip_text = MiniGitI18n.t("TOOLBAR_TIP")
 	var popup := _menu_button.get_popup()
 	popup.id_pressed.connect(_on_menu_id_pressed)
 	add_control_to_container(EditorPlugin.CONTAINER_TOOLBAR, _menu_button)
@@ -59,25 +51,27 @@ func _build_toolbar() -> void:
 func _refresh_menu() -> void:
 	if not is_instance_valid(_menu_button):
 		return
-	_menu_button.text = "Git" if _configured else "Git（未配置）"
+	var button_key := "BTN_GIT" if _configured else "BTN_GIT_UNCONFIGURED"
+	_menu_button.text = MiniGitI18n.t(button_key)
 	var popup := _menu_button.get_popup()
 	popup.clear()
 	if _configured:
-		popup.add_item("提交并推送…", 0)
-		popup.add_item("仅推送", 1)
-		popup.add_item("拉取（--ff-only）", 2)
-		popup.add_item("查看状态", 3)
+		popup.add_item(MiniGitI18n.t("MENU_COMMIT_PUSH"), 0)
+		popup.add_item(MiniGitI18n.t("MENU_PUSH_ONLY"), 1)
+		popup.add_item(MiniGitI18n.t("MENU_PULL"), 2)
+		popup.add_item(MiniGitI18n.t("MENU_STATUS"), 3)
 		popup.add_separator()
-	popup.add_item("配置…" if not _configured else "重新配置…", 9)
+	var configure_key := "MENU_CONFIGURE" if not _configured else "MENU_RECONFIGURE"
+	popup.add_item(MiniGitI18n.t(configure_key), 9)
 
 
 func _build_dialogs() -> void:
 	_commit_dialog = ConfirmationDialog.new()
-	_commit_dialog.title = "提交并推送"
-	_commit_dialog.ok_button_text = "提交并推送"
-	_commit_dialog.cancel_button_text = "取消"
+	_commit_dialog.title = MiniGitI18n.t("COMMIT_DIALOG_TITLE")
+	_commit_dialog.ok_button_text = MiniGitI18n.t("COMMIT_OK")
+	_commit_dialog.cancel_button_text = MiniGitI18n.t("CANCEL")
 	_message_edit = LineEdit.new()
-	_message_edit.placeholder_text = "提交说明，例如 feat(chess): 棋子移动"
+	_message_edit.placeholder_text = MiniGitI18n.t("COMMIT_PLACEHOLDER")
 	_message_edit.custom_minimum_size = Vector2(560, 0)
 	_commit_dialog.add_child(_message_edit)
 	_commit_dialog.register_text_enter(_message_edit)
@@ -85,8 +79,8 @@ func _build_dialogs() -> void:
 	add_child(_commit_dialog)
 
 	_output_dialog = AcceptDialog.new()
-	_output_dialog.title = "Git 输出"
-	_output_dialog.ok_button_text = "关闭"
+	_output_dialog.title = MiniGitI18n.t("OUTPUT_TITLE")
+	_output_dialog.ok_button_text = MiniGitI18n.t("CLOSE")
 	_output_dialog.min_size = Vector2i(820, 340)
 	add_child(_output_dialog)
 
@@ -102,12 +96,15 @@ func _open_setup() -> void:
 func _on_setup_configured(config: Dictionary) -> void:
 	var err := MiniGitConfig.save_config(_project_dir, config)
 	if err != OK:
-		_show_output("保存配置失败", {"code": err, "text": "无法写入 .git/minigit.cfg（错误码 %d）" % err})
+		_show_output(MiniGitI18n.t("SAVE_CONFIG_FAILED_TITLE"), {
+			"code": err,
+			"text": MiniGitI18n.t("SAVE_CONFIG_FAILED_TEXT", [err]),
+		})
 		return
 	_config = config
 	_configured = true
 	_refresh_menu()
-	print("[MiniGit] 配置已保存，功能已启用。")
+	print("[MiniGit] Settings saved, features enabled.")
 
 
 func _on_menu_id_pressed(id: int) -> void:
@@ -132,7 +129,10 @@ func _on_menu_id_pressed(id: int) -> void:
 func _on_commit_confirmed() -> void:
 	var message := _message_edit.text.strip_edges()
 	if message.is_empty():
-		_show_output("提交说明", {"code": 1, "text": "提交说明不能为空，已取消。"})
+		_show_output(MiniGitI18n.t("COMMIT_MESSAGE_TITLE"), {
+			"code": 1,
+			"text": MiniGitI18n.t("COMMIT_MESSAGE_EMPTY"),
+		})
 		return
 	_commit_and_push(message)
 
@@ -143,36 +143,36 @@ func _commit_and_push(message: String) -> void:
 	var added := _runner.git(PackedStringArray(["add", "-A"]))
 	lines.append("$ git add -A\n" + String(added["text"]))
 	if added["code"] != 0:
-		_show_output("失败：git add", {"code": added["code"], "text": "\n".join(lines)})
+		_show_output(MiniGitI18n.t("GIT_ADD_FAILED"), {"code": added["code"], "text": "\n".join(lines)})
 		return
 
 	var staged := _runner.git(PackedStringArray(["diff", "--cached", "--quiet"]))
 	if staged["code"] == 0:
-		lines.append("没有需要提交的改动。")
-		_show_output("提交并推送", {"code": 0, "text": "\n".join(lines)})
+		lines.append(MiniGitI18n.t("NOTHING_TO_COMMIT"))
+		_show_output(MiniGitI18n.t("COMMIT_DIALOG_TITLE"), {"code": 0, "text": "\n".join(lines)})
 		return
 
 	var committed := _runner.git(PackedStringArray(["commit", "-m", message]))
 	lines.append("$ git commit -m \"%s\"\n%s" % [message, String(committed["text"])])
 	if committed["code"] != 0:
-		_show_output("失败：git commit", {"code": committed["code"], "text": "\n".join(lines)})
+		_show_output(MiniGitI18n.t("GIT_COMMIT_FAILED"), {"code": committed["code"], "text": "\n".join(lines)})
 		return
 
 	var pushed := _runner.git(PackedStringArray(["push", "-u", "origin", "HEAD"]))
 	lines.append("$ git push -u origin HEAD\n" + String(pushed["text"]))
 	if pushed["code"] != 0:
-		_show_output("失败：git push", {"code": pushed["code"], "text": "\n".join(lines)})
+		_show_output(MiniGitI18n.t("GIT_PUSH_FAILED"), {"code": pushed["code"], "text": "\n".join(lines)})
 		return
 
-	lines.append("完成。")
-	_show_output("提交并推送", {"code": 0, "text": "\n".join(lines)})
+	lines.append(MiniGitI18n.t("DONE"))
+	_show_output(MiniGitI18n.t("COMMIT_DIALOG_TITLE"), {"code": 0, "text": "\n".join(lines)})
 
 
 func _push() -> void:
 	var result := _runner.git(PackedStringArray(["push", "-u", "origin", "HEAD"]))
 	var prefix := "$ git push -u origin HEAD\n"
 	var suffix := "" if result["code"] == 0 else "\n\n" + String(result["hint"])
-	_show_output("推送" if result["code"] == 0 else "失败：git push", {
+	_show_output(MiniGitI18n.t("PUSH_TITLE") if result["code"] == 0 else MiniGitI18n.t("GIT_PUSH_FAILED"), {
 		"code": result["code"],
 		"text": prefix + String(result["text"]) + suffix,
 	})
@@ -182,7 +182,7 @@ func _pull() -> void:
 	var result := _runner.git(PackedStringArray(["pull", "--ff-only"]))
 	var prefix := "$ git pull --ff-only\n"
 	var suffix := "" if result["code"] == 0 else "\n\n" + String(result["hint"])
-	_show_output("拉取" if result["code"] == 0 else "失败：git pull", {
+	_show_output(MiniGitI18n.t("PULL_TITLE") if result["code"] == 0 else MiniGitI18n.t("GIT_PULL_FAILED"), {
 		"code": result["code"],
 		"text": prefix + String(result["text"]) + suffix,
 	})

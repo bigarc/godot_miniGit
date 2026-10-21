@@ -140,15 +140,17 @@ v2.0 里提交、推送、拉取仍是同步执行：过程中编辑器会卡住
 ## 6. 文件拆分
 
 ```
-addons/minigit/
-├── plugin.cfg
-├── minigit.gd      入口：工具栏、菜单、提交/推送/拉取、输出窗口
+addons/godot_MiniGit/
+├── plugin.cfg       插件入口声明
+├── minigit.gd       入口：工具栏、菜单、提交/推送/拉取、输出窗口
 ├── setup.gd         配置窗口：五节检查与操作，保存后发 configured 信号
 ├── git_runner.gd    执行 git、错误映射、只读连通性探测
 ├── env_check.gd     环境检测（git/lfs/repo/remote/SSH 密钥）
 ├── config.gd        读写 .git/minigit.cfg
 ├── templates.gd     .gitignore / .gitattributes 默认内容
-└── DESIGN.md        本文件
+├── i18n.gd          界面文案表：跟随编辑器语言切换中英文
+├── README.md        给插件使用者看的安装与使用说明
+└── LICENSE          许可证副本（资产商店要求插件目录自带）
 ```
 
 ## 7. 进度
@@ -169,6 +171,12 @@ addons/minigit/
 
 ## 9.安装与使用
 
+### 从资产商店安装
+
+在编辑器的 AssetLib 里搜索 **MiniGit**，安装后到 项目 → 项目设置 → 插件 里启用。资产商店下载的压缩包里只有 `addons/godot_MiniGit/`，不含本仓库的开发工程、截图和文档。
+
+### 手动安装
+
 - 1.安装  
 	**将 addons 文件夹覆盖到工程根目录**  
 	**或者将压缩包直接解压到根目录的 addons（如果没有的话就自己新建一个）**
@@ -183,3 +191,5 @@ addons/minigit/
 	![配置 2](other/show_5.png)  
 	然后你就可以用了：  
 	![使用效果](other/show_6.png)
+
+界面语言跟随 Godot 编辑器自己的语言设置：编辑器是中文就显示中文，其他语言回退到英文。打包与提交流程见 [PACKAGING.md](PACKAGING.md)。

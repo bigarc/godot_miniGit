@@ -1,7 +1,6 @@
 class_name MiniGitEnv
 extends RefCounted
 ## 本机环境检测：git、git-lfs、是否仓库、远端、SSH 密钥、忽略文件。
-## 全部只读，任何一项失败都不会打断流程，只影响向导里哪些按钮可用。
 
 const KEY_NAMES := ["id_ed25519", "id_rsa", "id_ecdsa"]
 

@@ -1,10 +1,6 @@
 class_name MiniGitRunner
 extends RefCounted
-## 对系统 git 的一层薄封装：拼参数、跑命令、把英文报错翻译成下一步动作。
-##
-## 为什么不是 libgit2：libgit2 不执行 git 的 clean/smudge 过滤器，
-## LFS 仓库用它提交会把二进制直接塞进 git 对象。调系统 git 则和命令行完全一致。
-##
+## 对系统 git 的一层薄封装：拼参数、跑命令、翻译报错。
 ## OS.execute 是同步阻塞的，调用方负责把它放到线程里（如果可能卡住）。
 
 const GIT := "git"
@@ -51,22 +47,22 @@ func probe_remote(url: String, transport: String) -> Dictionary:
 
 func _hint(code: int, text: String) -> String:
 	if code == -1:
-		return "找不到 git 可执行文件：先安装 Git for Windows，确认它在 PATH 里"
+		return MiniGitI18n.t("HINT_NO_GIT")
 	var lower := text.to_lower()
 	if lower.contains("permission denied (publickey"):
-		return "GitHub 不认这把密钥：把公钥加到 GitHub，或确认 ssh-agent 里已加载"
+		return MiniGitI18n.t("HINT_PUBKEY")
 	if lower.contains("could not resolve host"):
-		return "域名解析失败：检查网络或代理设置"
+		return MiniGitI18n.t("HINT_DNS")
 	if lower.contains("authentication failed"):
-		return "HTTPS 凭据失效：让 Git Credential Manager 重新登录一次"
+		return MiniGitI18n.t("HINT_AUTH")
 	if lower.contains("repository not found"):
-		return "仓库不存在或没有权限：核对地址、组织权限、密钥是否属于有权限的账号"
+		return MiniGitI18n.t("HINT_REPO_NOT_FOUND")
 	if lower.contains("not a git repository"):
-		return "当前目录还不是 git 仓库：先初始化"
+		return MiniGitI18n.t("HINT_NOT_REPO")
 	if lower.contains("nothing to commit"):
-		return "没有需要提交的改动"
+		return MiniGitI18n.t("HINT_NOTHING_TO_COMMIT")
 	if lower.contains("no upstream"):
-		return "当前分支还没有上游：第一次推送会自动设置"
+		return MiniGitI18n.t("HINT_NO_UPSTREAM")
 	if code != 0:
-		return "命令失败，看下面的原始输出"
+		return MiniGitI18n.t("HINT_GENERIC")
 	return ""
