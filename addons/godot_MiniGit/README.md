@@ -47,10 +47,10 @@ ssh-agent、凭据管理器都按终端里的行为工作。
 
 ## 安装
 
-- **资产商店**：在编辑器的 AssetLib 里搜索 **MiniGit**，安装后到
-  **项目 → 项目设置 → 插件** 里启用。
-- **手动**：把 `addons/godot_MiniGit/` 整个拷进工程的 `addons/` 下
+- **手动**：
+1.把 `addons/godot_MiniGit/` 整个拷进工程的 `addons/` 下
   （`.uid` 文件一起带上），再到插件里启用。
+2.下载压缩包，将压缩包内容解压至addons。
 
 首次启用会打开配置窗口：环境检测、`git init`、远端与 SSH 密钥、
 `.gitignore` / `.gitattributes` / Git LFS、连通性测试。配置写到
