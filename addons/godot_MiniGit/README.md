@@ -27,6 +27,8 @@ The toolbar button **Git** offers commit and push, push only, pull
   Git Credential Manager.
 - Every command that changes the repository asks for confirmation first.
 - Every action prints the exact Git command it ran, and the raw output is kept.
+- Git runs in a background thread, so the editor stays responsive; the toolbar
+  shows which operation is running, and the result window scrolls.
 
 Requires Godot 4.x and Git 2.23 or newer. Git LFS is optional.
 
@@ -62,6 +64,7 @@ ssh-agent、凭据管理器都按终端里的行为工作。
 - 不保存任何凭据；SSH 交给 ssh-agent，HTTPS 交给 Git Credential Manager。
 - 会改变仓库状态的命令都先弹确认。
 - 每条动作都打印实际执行的 git 命令，原始输出保留。
+- git 在后台线程里跑，编辑器不会卡住；工具栏会显示当前在做什么，结果窗口可以滚动。
 
 需要 Godot 4.x 和 Git 2.23 以上；Git LFS 可选。
 

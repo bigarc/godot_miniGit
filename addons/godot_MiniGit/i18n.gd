@@ -47,6 +47,13 @@ const EN := {
 	"DONE": "Done.",
 	"PUSH_TITLE": "Push",
 	"PULL_TITLE": "Pull",
+	# 后台任务
+	"BUSY_COMMIT": "Git (committing…)",
+	"BUSY_PUSH": "Git (pushing…)",
+	"BUSY_PULL": "Git (pulling…)",
+	"BUSY_STATUS": "Git (reading status…)",
+	"THREAD_FAILED_TITLE": "Cannot Start Background Task",
+	"THREAD_FAILED_TEXT": "Failed to start the background thread (error code %d).",
 	# 配置窗口：环境与仓库
 	"SETUP_TITLE": "Git Setup",
 	"SEC_ENV": "1. Environment",
@@ -145,6 +152,13 @@ const ZH := {
 	"DONE": "完成。",
 	"PUSH_TITLE": "推送",
 	"PULL_TITLE": "拉取",
+	# 后台任务
+	"BUSY_COMMIT": "Git（提交中…）",
+	"BUSY_PUSH": "Git（推送中…）",
+	"BUSY_PULL": "Git（拉取中…）",
+	"BUSY_STATUS": "Git（读取状态…）",
+	"THREAD_FAILED_TITLE": "无法启动后台任务",
+	"THREAD_FAILED_TEXT": "后台线程启动失败（错误码 %d）。",
 	# 配置窗口：环境与仓库
 	"SETUP_TITLE": "Git 配置",
 	"SEC_ENV": "1. 环境检测",
